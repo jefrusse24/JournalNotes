@@ -1,0 +1,65 @@
+2013-10-05
+  - Got the ToolbarPanel to show the buttons and the search panels.
+
+2013-10-07
+  - Got the Menubars to build the menus efficiently.  Made the listener for the menubar,
+  but it is only a stub right now.  No code behind the listener.
+  
+2013-10-08
+  - Got the Preferences Panel to show up in the correct spot on a mac.
+  - Implemented the Preferences Panel
+  
+Database Read
+It will first look at the local File Copy, and read the last Modified Date
+Then read the Database Last Modified Date and the by Who (UUID) value.
+If they are the same, then just read the local file copy.
+If they are different, then :
+
+  If the database date is newer, then we need to get every page from the DB that has a modified
+  date that is after the local file copies modified date.
+  
+  If the Local File ise newer, then we need to send every page from the local file that has a modified
+  date that is after the DB modified date.  We also need to update the modified date and the UUID field.
+  
+  
+  What if there is a conflict?  How do you detect a conflict?
+  Page on DB modified by user1 is newer than local copy (User 2)?  You need to keep track of the last time
+  the page was synched with the DB (Sort of like a version number).
+  
+Document:
+  Date Last Synched
+  Date Last Modified
+  
+Page:
+  Date Created
+  Date Last Synched
+  Date Modified
+  
+The database modified and last sync are the same value.  Only need one field in the DB.
+  
+When attempting to sync with DB, we get the Last Synched Date from local and db.  If the uuid and sync date are the same, then
+everything is fine.  Use the local file copy.
+
+If the uuid is the same and the modified dates are different, (the last modified has to be more recent on the local)
+then use the local file copy and send updates to the DB.
+  Updates are any page that has a modified date > than sync date.
+
+If the uuids are different, then we look at each page as we try to reconsile the differences.  Our goal is to get
+the local and db to the latest.
+  - If local last sync == db last sync, do nothing.  (both the same)
+  - If local last sync < db last sync
+    - if local last sync == local modified, get db page to local
+    - if local last sync != local modified, CONFLICT
+  - If local last sync > db last sync - CANT HAPPEN.
+  
+This may occur if the last time we were working on the document, we could not sync with DB
+  - If local modified > local last sync
+    - if db last sync == local last sync, send local page to db
+	- if db last sync > local last sync, CONFLICT
+	- if db last sync < local last sync - CANT HAPPEN
+  
+2013-10-14
+  - When you read in a document, select the last page to be shown in the page panel and the summary panel.
+  - Got the "New" button and the menu item "New Page" to work correctly.
+  - Started working on the "Info" button to show the detailed page information.
+
