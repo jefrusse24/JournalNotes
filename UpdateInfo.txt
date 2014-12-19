@@ -1,65 +1,487 @@
-2013-10-05
-  - Got the ToolbarPanel to show the buttons and the search panels.
+====================================
+Things to do:
++ Text Size Modification (MInputField - use JTextPane instead of JTextArea???)
++ Display a pages tags somewhere/somehow.
++ If you create a solid shape, then go to edit a non-solid shape, the non-solid shape
+  becomes solid.
++ Should not be able to change the "Root" node of the tag list with Edit->Update Tags...
++ Toolbar and menu items need to be aware of eachother.  If you select the Ellipse in
+  the menubar, then the ellipse should get hilighted in the toolbar.
++ Menubar.  Do not do the "Unselect" type action - where if Rectangle is selected, and
+  you select rectangle it goes back to the default of "text" mode.  Instead just leave
+  it in Rectangle mode.
++ Need to be able to remove tags from a page.
++ Set the master password for the document.
++ Allow lines to have length on them or not - Shape parameter.
++ After editing a shape, make sure you keep the shapes (DONE: original color, text,) line width, solid value.
++ If there is a backup file, ask the use if they want to restore from the backup.
 
-2013-10-07
-  - Got the Menubars to build the menus efficiently.  Made the listener for the menubar,
-  but it is only a stub right now.  No code behind the listener.
-  
-2013-10-08
-  - Got the Preferences Panel to show up in the correct spot on a mac.
-  - Implemented the Preferences Panel
-  
-Database Read
-It will first look at the local File Copy, and read the last Modified Date
-Then read the Database Last Modified Date and the by Who (UUID) value.
-If they are the same, then just read the local file copy.
-If they are different, then :
+====================================
+Done:
+June 3, 2010
++ On initial start up need to load the last saved file.
++ Todo text-Draw a green circle in front of the text
++ Todo Text- Mark as complete/incomplete.
++ The Color Selection of an object is not working right.
 
-  If the database date is newer, then we need to get every page from the DB that has a modified
-  date that is after the local file copies modified date.
-  
-  If the Local File ise newer, then we need to send every page from the local file that has a modified
-  date that is after the DB modified date.  We also need to update the modified date and the UUID field.
-  
-  
-  What if there is a conflict?  How do you detect a conflict?
-  Page on DB modified by user1 is newer than local copy (User 2)?  You need to keep track of the last time
-  the page was synched with the DB (Sort of like a version number).
-  
-Document:
-  Date Last Synched
-  Date Last Modified
-  
-Page:
-  Date Created
-  Date Last Synched
-  Date Modified
-  
-The database modified and last sync are the same value.  Only need one field in the DB.
-  
-When attempting to sync with DB, we get the Last Synched Date from local and db.  If the uuid and sync date are the same, then
-everything is fine.  Use the local file copy.
+June 4, 2010
++ When changing pages by clicking on the QuickList, the current editing textarea
+	needs to be finished and closed.
++ save as jrjn file extension.
++ When drawing a shape, if you move to a -x, or -y direction, the shape
+	is not drawn.
 
-If the uuid is the same and the modified dates are different, (the last modified has to be more recent on the local)
-then use the local file copy and send updates to the DB.
-  Updates are any page that has a modified date > than sync date.
+June 8, 2010
++ Fixed problem when doing a "Quit" on a modified document.  It will now
+  actually save the document if you ask it to.
+  - NoteMenuBar.java
 
-If the uuids are different, then we look at each page as we try to reconsile the differences.  Our goal is to get
-the local and db to the latest.
-  - If local last sync == db last sync, do nothing.  (both the same)
-  - If local last sync < db last sync
-    - if local last sync == local modified, get db page to local
-    - if local last sync != local modified, CONFLICT
-  - If local last sync > db last sync - CANT HAPPEN.
-  
-This may occur if the last time we were working on the document, we could not sync with DB
-  - If local modified > local last sync
-    - if db last sync == local last sync, send local page to db
-	- if db last sync > local last sync, CONFLICT
-	- if db last sync < local last sync - CANT HAPPEN
-  
-2013-10-14
-  - When you read in a document, select the last page to be shown in the page panel and the summary panel.
-  - Got the "New" button and the menu item "New Page" to work correctly.
-  - Started working on the "Info" button to show the detailed page information.
++ Tag List - New Buttons up, down, left, right
+  - CategorySettings.java, CategoryEventsHandler.java
 
++ Tag List - Move Item in tree up or down	
+  - CategorySettings.java, CategoryEventsHandler.java
+  
++ Tag List - Move Item in tree into a subtree - Become a child of the previous peer leaf.
+  - CategorySettings.java, CategoryEventsHandler.java
+
+June 9, 2010
++ Tag List - Move Item in tree branch out of a branch, and become a peer of it's parent.
+  - CategorySettings.java, CategoryEventsHandler.java
+
+June 16, 2010
++ Clicking on "New" when editing a textarea should close the current text area before creating a new page.
+  - NotesEventHandler.java
+
+June 18, 2010
++ Drawing Object - Attach Text to it.
++ Worked on the Color selection of objects.
+
+June 20, 2010
++ When you right click on an item and there is a popup menu, if you move off the menu
+	with the button down, the selected object moves when you don't expect it to.
+  - ADrawPanel.java
+
+June 21, 2010
++ Need to Bold (Or something) the calendar days that have pages associated with them.
+  - CalendarSettings, CustomTableCellRenderer, Pages.java,
+  - LocalDataManip, NoteMenuBar (File open/save/new/initial load)
+
+July 23, 2010
++ Edit existing shapes - Resize rectangles.
+  - ADrawPanel
+
+July 26, 2010
++ When editing a shape, the color is not preserved.
+  - ADrawPanel
+
+July 27, 2010
++ On opening a document, make sure the correct page is selected in the quicklist (The last page).
+  - journalNotes, QuickSettings
+
+July 28, 2010  
++ Find needs to show the page the text was found on.
+  - ADrawPanel, QuickSettings
+
+August 12, 2010
++ Get background save working.
+  - Pages, BackgroundSave, ADrawPanel, NoteMenuBar, LocalDataManip
++ Right click on object, and drop down list should include send to back, 
+  bring to front, send backwards, bring forwards.
+  - Page, ADrawPanel
++ Change Elipse to Ellipse (Spelling).
+  - NotesMenuBar
++ Menu Bring to front/back, forwards, backwards - Get these working.
+  Removed this from the main menu and now it is in the popup menu associated with the page objects.
+  - NotesMenuBar
+
+August 18, 2010
++ Need to save the text associated with a text object.
+  - ShapeBlock
++ Need to return null from the color chooser if the text is either null or "".
+  - ShapeModifier
+  
+ AUGUST 26, 2010
+ + If in drawing mode and you do a right-click on an object, it brings up the menu.  It also
+  draws a shape... make the right-click not draw a shape.
+   - ADrawPanel - Check for 3rd button press In mouseReleasd
+ + Fix problem where you can no longer drag/resize shapes
+   - ADrawPanel - Removed m_shapeEditHandles.clear from finishEditing()
+
+September 3, 2010
++ Delete a page
+  - NoteMenuBar - Create a Page menu item and add the delete option in the menu,
+      as well as implement the delete handler.
+  - Pages - Create method to delete the current page.
++ When you click on "New" for a new page, have the quicklist be now selected on that
+  new page.
+  - NotesEventHandle - update actionPerformed method to updateQuickPanelCurrentPage
+
+September 7, 2010
++ Insert a page
+  - NoteMenuBar - Added a handler for the insertion of a page.
+  - Pages - new method insertPage(int) to insert a page into the notebook.
++ Sorting on Page Number - Treats page numbers as text, not numbers.
+  - QuickSettings - Insert objects instead of strings into the table (Integers and Dates object types)
+  - QuickPanel - in creation of the table, have a method getColumnClass, set a grid color to have a grid.
++ Have Date show up as "Aug 7, 2010"
+  - NotesPanel - Draw the date String as a Date like "Aug 7, 2010"
+  
+September 13, 2010
+  Started to show todo.  New Menu item under Edit.
+  - gui.ShowTodo - new class created. Gets list of todo items.  Need to create the gui for this
+      class properly. 
+  - Page - new method getTodoList()
+  - Pages - new methods getPageCount(), getPage(Page pageNum)
+  - NotesMenuBar - Added new menu item for Show Todo items.
+
+September 21, 2010
++ Todo list - Show quick list of todo items.
+  Should be done now.
+  -TextBlock - New toString method
+  -ShowToDo - More modifications made.
+
+September 22, 2010
+  - ShowToDo - Center Renderer for table columns
+  - QuickPanel - Center Renderer for table columns
+
+September 23, 2010
+ + Setting name of current page does not get reflected in the QuickList.
+   - QuickSettings - updateQuickPanel - The page number field is not a string anymore, so 
+     the search was not finding the page.  Now it is a number, and we search for a number.
+ + Todo Filter does not do anything.
+   - ShowToDo
+   - Page.getTodoList - pass in parameter for either open, or all todo items.
+
+September 24, 2010
+ + Create "Deploy" ant build task that will copy the code to the application location.
+
+September 28, 2010
++ Move to Front - Needs to put things at the end of the list
++ Move to Back - Needs to put things at the front of the list
++ Move forwards - Should move things towards the end of the list
++ Move Backwards - Should move things towards the front of the list.
+  - Page - orderObject - Updated to move front to back of list, and back to front of list.
++ When you select an item, start from the front and go the the end of the list.  The last item
+  to match that point is what you want.
+  - Page - getObjectAtPoint - returns the last hit in the list, not the first hit.
++ When clicking an item in the todo list, if the page is in the quicklist, then show it and hilight that page.
+  - ShowToDo - valueChanged - Make call to updateQuickPanelCurrentPage for QuickSettings.
+
+September 29, 2010
++ When you use the up/down arrow when on the quicklist, change pages.
+  QuickSettings - rowSelected - Make a request focus
+
+October 3-5, 2010
++ Create a toolbar for easy selection of draw/text/select mode... 
+  - NotesToolbar - Created this class.
+  - NotesPanel - Call to create the NotesToolbar
+  - ADrawPanel - New method to show the color chooser, and get the color from the color chooser.
+  
+October 11, 2010
++ Update the save icon in the toolbar if document is modified
+  - NotestToolbar - Created method to modify the icon
+  - NotesSettings - Created public method to save the icon
+  - NotesPanel - Need to keep track of the toolbar object.
+  - Pages - in the isModified(boolean) method, call the NotesSettings update icon.
+
+
+ ----------------------------------------
+ -- Released Version 1.2  --------------
+ -- October 19, 2010
+ ----------------------------------------
+ 
+ October 26, 2010
+ + If you have double clicked a shape to edit it, then click on a different pane that
+  switches a page or something, the green handles still remain.
+   - ADrawPanel - Create a new method to remove the shape edit handles
+   - NotesSettings - The method that is called when a page is changed.
+ + When you right click when in a drawing mode (Rectangle, ellipse...), a shape
+  is created.
+   - Nothing.  Not reproducible anymore.
+ 
+ November 8, 2010
+ + NotesPanel- New class IconListRenderer used to add Chain link image next to Page
+ + NotesEventHandler - No need to wait for a "Return" key to be typed when changing the 
+     title of the page.
+ 
+ November 21, 2010
+ + AScrollPanel - New class for scrolling type text input
+ + NotesToolbar - Add Dropdown list of paper types
+ + ADrawPanel - Updates/ Cleanup
+ + NotesPanel - Aware of both scrolling and drawing panels.
+ + Page - Add support for the different Paper Type.
+
+January 7, 2011
++ When "New" is clicked, set the focus to the page header
+  - NotesEventHandler - Removed the use of this class and rolled it into NotesPanel
+    so all event handling is done in this class, and it has access to the page header title field
+  - NotesPanel - See note above.
+
+January 30, 2011
++ Lock a page
+  - LockDialog - Created this class
+  - Page - Add fields to indicate if the page is locked
+
+February 2011
++ Encrypt locked page content
+  - PassKey - Created new encrypt, decrypt, compress, decompress methods.
+
+March 6, 1011
++ Do not search a locked page for content
+  - Page.java - findText - skip search if the password is set.
+
+ ----------------------------------------
+ -- Released Version 1.3  --------------
+ -- March 16, 2011
+ ----------------------------------------
+ 
+March 16, 2011
++ When you lock a page, it needs to encrypt the data.
+  - Page.java - look at all text on the page and call encryptBlock
+  - TextBlock.java - new method encryptBlock()
+
+ ----------------------------------------
+ -- Released Version 1.3.1  --------------
+ -- March 16, 2011
+ ----------------------------------------
+
+March 24, 2011
++ Fixed problem where if you set the page type to a "Doc" type, it would cause
+  the file not to be read in.
+  -  TextBlock.java - Handle null point.
++ Create New class so we can have a background for the Doc type pages.
+  - JrTextPane.java
+  - AScrollPanel.java - Added new calls in to support JrTextPane.
+
+April 3, 2011
++ Get find/find again to work with document pages
+  - Pages.java
+  - Page.java
+  - AScrollPanel.java
+  
+April 5, 2011
++ Paste Images
+  - NoteMenuBar.java - Add call to handle the paste command.
+  - AScrollPanel.java - Perform the paste into the scroll panel.
+
+24ac0 64 20 69 6e 20 6f 75 72   20 61 75 74 6f 6d 61 74     d in our automat
+24ad0 69 6f 6e 20 74 65 73 74   20 62 65 64 2e 00 00 78     ion test bed...x
+24ae0 73 72 00 13 64 6f 63 75   6d 65 6e 74 2e 49 6d 61     sr..document.Ima
+24af0 67 65 42 6c 6f 63 6b 8c   cb 57 d7 b3 20 bf af 03     geBlock..W.. ...
+24b00 00 02 4c 00 04 6d 5f 62   69 74 00 1e 4c 6a 61 76     ..L..m_bit..Ljav
+
+Somethig wrong with the 00 00 78 at 0x24add
+The 2e is a period for the last sentence.  Then the 00 00 is the start of an object (ImageBlock)
+but the reader does not read it correctly.... not sure why, or what it is expecting.
+So a way around it is to read in the correct number of bytes and jsut put in an empty object in the array.
+The other is to skip the whole page.
+
+May 20, 2011
++ Drag and drop from QuickPanel to CategoryPanel
+	- CategoryTranserHandler.java - Added support to get data from QuickPanel.
+	- QuickPanel.java - Enable drag capability.
+
+May 22, 2011
++ Worked on Editing Page Tags
+	AScrollPanel.java - GUI for the editing of page tags.
+
+May 23, 2011
++ Completed  Editing Page Tags
+	- AScrollPanel.java - GUI for the editing of page tags.
+
+June 5, 2011
++ Get highlighting working for the searched text.
+	- AScrollPanel.java - hiliteText method updated for doc areas
+	- TextBock.java - Need to get this working correctly.
+
+August 3, 2011
++ Fixed bug when saving encrpted page, and you were currently editing it, it was
+  trying to encrpyt an empty string.
+  	- PassKey.java - In compressString and decompressString, I check for null, or empty string
+	- Page.java - When writing text block, I now check to make sure the text block is not empty.
++ Fixed bug that displays the scroll text even if the page is locked.
+	- AScrollPanel.java - in paint(), I make sure the text areas are hidden if the page is locked.
+
+August 4, 2011
++ Have background save be able to save any doc tyoe field
+	- NotesSettings.java, AScrollPanel.java - Created new methods called prepareForSave();
+	- LocalDataManip.java - Call the NotesSettings.getInstance().prepareForSave() before saving.
+
+October 31, 2011
++ During a find, if it hits the end of the document tell the user and show dialog to find out
+  if the search should continue
+    - Pages.java - Added new call and function of endDocReachedContinue()
+    - AScrollPanel.java - Handle null coming back from search.
++ Search looks at title of page too
+	- Page.java - findText method looks at title too.
++ Tone down the background lines on a page from Cyan to a softer color.
+	- Page.java - drawPageType uses color (200,230,250)
+	- JrTextPane.java - paintComponent uses color (200,230,250)
+
+March 12, 2012
++ Started to change a line (LineBlock.class) into a Shape (ShapeBlock.class).
+  This way I can set the color and text of a line.
+ + Would also like to be able to draw on a doc_page type without all the text being removed.
+   Drawing found in AScrollPanel
+ 
+July 26, 2012
++ Fixed line drawing.  Removed DRAW_LINES, and consolidated it to DRAW_LINE.
++ ShapeBlock - New static method for drawing shapes to be called from the AScrollPane so I have to define the drawing
+  of shapes in one class.
++ ShapeBlock - Added the length value to lines. 
++ ADrawPanel - Started to remove references to this class.  This is depreciated and we should be using the AScrollPanel
++ Started Copy/Paste of objects  (PageObject implements Transferable) 
+
+December 12, 2012
++ AScrollPanel.java::onPaint() - If you select a text object on a non-document
+  type page, the text object was disapearing.  Added call to paint textBox.
+
+February 6, 2013
++ AScrollPanel - KeyStrokeListener to update isModified Field correctly.
++ AScrollPanel - Instead of "Change Color" menu when right clicking on an object, have it say "Change Properties"
+  So you can include properties like line length.
++ AScrollPanel - Remove the "Add Text" from the drop down when right clicking an object.
+
+February 20, 2013
++ AScrollPanel, ShapeBlock - When editing a shape, show the drag handles.
+    - WHen You edit a shape with text, do not loose the text.
+
+SOME TIME IN THE PAST:
++ After adding a whole Page Text, it places the text at -1,-1, and not at 30,0 like it needs
+  to be placed.
+
+February 21, 2013
++ AscrollPanel, JrTextPane - Added some needed comments to the code.
+
+March 4, 2013
++ ADrawPanel, ShapeModifier - Removed this code (Commented the entire classes).
++ AScrollPanel, NoteMenuBar, NotesToolbar, DrawingMode, PageObject, ShapeBlock 
+    - Created support for both DRAW_LINE and DRAW_LINE_SIZE. and also started DRAW_LINE_ARROW1/2
+      NEED HOOK to menubar so we an update it when we click on something in the toolbar.
+
+
+
+*****************
+*** FORMATTED TEXT
+*****************
+Need to be able to keep this formatting on each page.
+Each Page needs to have a StyledDocument object.
+If this object is not null, then we will use it.
+This will contain the text as well as the formatting.
+In the Page class, we have a variable DOCUMENT_VERSION that will
+be embedded in each page that will indicate what version this page
+is.  A StyledDocument needs to be saved in each page.  How do you
+get a unique SytledDocument into each page?  
+
+PAGE FORMAT:  (Version 0-99)
+  integer - page number
+  UTF String - Page Title
+  integer - page type
+  long - date
+  Color - page color
+  LinkedList - Page Objects
+  UTF String - Categories
+  UTF String - PageLockKey
+  
+PAGE FORMAT:  (Version 150)
+  integer - page number
+  UTF String - Page Title
+  integer - Version (150)
+  integer - page type
+  long - date
+  Color - page color
+  LinkedList - Page Objects
+  UTF String - Categories
+  UTF String - PageLockKey
+  LinkedList - FormatEntryList
+  UTF String - Page Text    
+
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+March 20, 2013
+   Made changes to handle the different font styles.
+   NoteMenuBar - List the styles, and handle the styles selected.  New ENUM class for the styles. 
+   Page - Changes to handle the reading/writing and also the styled document object and its new things.
+   FormatEntry - New Class for the formatting
+   FormatEntryList - New class for the formatting.  Contais a list of FormatEntry.  This is to be saved in the doc.
+   AScrollPanel - Changes here too.
+ 
+I Don't think we need the KelListener in the AScrollPanel, because there is a class inside AScrollPanel for that,
+but there is some code in the current listeners (that I don't think get touched), but perhaps this functionality is
+now missing.
+
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+March 23, 2013
++ Get Find... working again after changing to a Styled Text.
+  AScrollPanel, Page
++ Get Copy/Paste working for formatted text.
+  - JTextPaneSelection, JTextPaneTransferHandler - New Files
+  - AScrollPanel - Add Listener
++ Remove keyListener from AScrollPanel - Was not doing anything
+  - AScrollPanel, MTextArea
+  
+
+
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+May 22, 2013
+-------------------------------------------------------------------------------
+JournalNotes Document Format
+
+Document Version – Integer (130522)
+Category Tree - UTF
+Number of Pages – Integer
+Page 1
+…
+Page N
+
+This way if there is a problem reading a page, like page 200, we can still keep the first 199 pages.
+
+Page Format 0x100
+Page Version - Integer
+Page Type - Integer
+Date – Long
+Page Background Color – Color
+Page Objects – ArrayList<PageObjects>
+Categories – UTF
+Formatting – FormatEntryList
+Page Text – UTF
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+July 21, 2013
+-------------------------------------------------------------------------------
+JournalNotes Document Format
+
+Document Version – Integer (130721)
+Category Tree - String
+Number of Pages – Integer
+Page 1
+…
+Page N
+
+This way if there is a problem reading a page, like page 200, we can still keep the first 199 pages.
+
+Page Number - Integer
+Page Title - String
+Page Type - Integer
+Date – Long
+Page Background Color – Color
+Page Objects – ArrayList<PageObjects>
+Categories – String
+Formatting – FormatEntryList
+Unlocked - Boolean
+Page Text - TextBlock
+
+Page Text – String or if encrypted : { length – Integer , byte….. }
+
+Note if Formatting is null, then there is no Page Text field.
+
+What if there is no text on the page?  How can we tell if the person has encrypted/decrypted
+the page.  Empty Text Block but when encrypted, it is just the key word.
+
+-------------------------------------------------------------------------------
+-------------------------------------------------------------------------------
+
+   
